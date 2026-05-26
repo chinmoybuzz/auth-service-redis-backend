@@ -30,6 +30,18 @@ const Post = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    deleted_by: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    created_by: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     timestamps: true,

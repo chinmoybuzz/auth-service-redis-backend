@@ -91,7 +91,7 @@ const add = async (payload) => {
 };
 const edit = async (payload) => {
   try {
-    console.log("payload", payload);
+    // console.log("payload", payload);
 
     const { id, password, roleId, ...updateData } = payload;
     const userData = await User.findOne({ where: { id }, attributes: { exclude: ["password", "roleId"] } });
@@ -115,8 +115,6 @@ const edit = async (payload) => {
 };
 const deleteData = async (payload) => {
   try {
-    console.log("payload", payload);
-
     const { id } = payload;
     const userData = await User.findOne({ where: { id }, attributes: { exclude: ["password", "roleId"] } });
     // Check user exists or not
@@ -132,7 +130,7 @@ const deleteData = async (payload) => {
       data: "",
     };
   } catch (error) {
-    error("error", error);
+    // error("error", error);
     throw appError("User system Problem ", 500);
   }
 };

@@ -15,7 +15,7 @@ const list = async (payload) => {
       data: response,
     };
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     throw new AppError("System problem", 500);
   }
 };
@@ -48,6 +48,48 @@ const add = async (payload) => {
     // console.log(error);
   }
 };
-const edit = (payload) => {};
-const deleteData = (payload) => {};
+const edit = async (payload) => {
+  try {
+    // console.log("payload", payload);
+
+    const { id, ...updateData } = payload;
+    const userData = await Post.findOne({ where: { id }, attributes: { exclude: ["password", "roleId"] } });
+    // Check user exists or not
+    if (!userData) {
+      throw appError("User not found", 404);
+    }
+
+    const updatedUser = await userData.update({
+      ...updateData,
+    });
+    return {
+      message: "Update successfully",
+      data: updatedUser,
+    };
+  } catch (error) {
+    // console.log(error);
+
+    throw appError("User System Problem", 500);
+  }
+};
+const deleteData = async (payload) => {
+  try {
+    const { id } = payload;
+    const postData = await Post.findOne({ where: { id } });
+    // Check user exists or not
+    if (!postData) {
+      throw appError("Post not found", 404);
+    }
+
+    const updatedUser = await postData.update({
+      deleted_at: new Date(),
+    });
+    return {
+      message: "Post Deleted successfully",
+      data: "",
+    };
+  } catch (error) {
+    throw appError("Post system Problem ", 500);
+  }
+};
 export { list, add, edit, deleteData };
