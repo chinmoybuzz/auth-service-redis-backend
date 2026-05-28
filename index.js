@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import http from "http";
 import session from "express-session";
 import cors from "cors";
 import responseTime from "response-time";
@@ -10,8 +11,9 @@ import { sequelize } from "./config/mysql.config.js";
 import { connectRedis } from "./config/redis.config.js";
 import apiV1Route from "./routes/api.v1.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
+import { auth } from "./middleware/socketAuth.js";
 // const apiV1Route = require("./routes/api.v1.route");
-
+import { socketInitialize } from "./config/socket.js";
 const PORT = process.env.PORT;
 const app = express();
 
@@ -49,7 +51,15 @@ const start = async () => {
   });
   await sequelize.sync({});
   await connectRedis();
-  app.listen(PORT, () => console.log(`Server started to: http://localhost:${PORT}`));
+  app.get("/", auth, (req, res) => {
+    res.sendFile(path.join(process.cwd(), "public/chat.html"));
+  });
+  app.get("/login", (req, res) => {
+    res.sendFile(path.join(process.cwd(), "public/login.html"));
+  });
+  const server = http.createServer(app);
+  socketInitialize(server);
+  server.listen(PORT, () => console.log(`Server started to: http://localhost:${PORT}`));
 };
 
 app.use("/api/v1", apiV1Route);
